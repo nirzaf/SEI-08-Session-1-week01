@@ -1,27 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TypeScript Tutorial</title>
+    <title>Comprehensive TypeScript Tutorial</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                    },
+                    boxShadow: {
+                        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                },
+            },
+            plugins: [
+                require('@tailwindcss/typography'),
+            ],
+        };
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Using Inter font as specified */
             scroll-behavior: smooth;
         }
 
         /* Sidebar styles */
         .sidebar {
             transition: transform 0.3s ease-in-out;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e0 #f7fafc;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f7fafc;
         }
 
         .sidebar-open {
@@ -35,7 +75,6 @@
         /* Active link styling */
         .sidebar-link.active {
             background-color: #4F46E5;
-            /* Indigo-600 */
             color: white;
             font-weight: 600;
         }
@@ -43,47 +82,49 @@
         /* Content section styling */
         .content-section {
             padding-top: 1.5rem;
-            /* 24px */
             padding-bottom: 1.5rem;
-            /* 24px */
             border-bottom: 1px solid #e5e7eb;
-            /* Cool Gray 200 */
         }
 
         .content-section:last-child {
             border-bottom: none;
         }
 
-        /* Code block styling */
-        pre[class*="language-"] {
+        /* Section cards */
+        .section-card {
+            transition: all 0.2s ease-in-out;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-color: #cbd5e0;
+        }
+
+        /* Code blocks */
+        pre {
             border-radius: 0.5rem;
-            /* 8px */
             padding: 1rem;
-            /* 16px */
-            margin-top: 0.5rem;
-            /* 8px */
-            margin-bottom: 1rem;
-            /* 16px */
             overflow-x: auto;
-            background-color: #2d2d2d;
-            /* Prism Tomorrow background */
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            background-color: #1E1E1E;
+            color: #D4D4D4;
+            position: relative;
         }
 
         code[class*="language-"] {
-            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
             font-size: 0.875rem;
-            /* 14px */
+            line-height: 1.5;
         }
 
-        /* Custom scrollbar for webkit browsers */
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -95,10 +136,30 @@
             background: #555;
         }
 
+        /* Responsive adjustments */
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        /* Animation for content */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
         /* Header styling */
         .main-header {
             background: linear-gradient(to right, #6366F1, #8B5CF6);
-            /* Indigo to Purple gradient */
         }
 
         /* Headings */
@@ -107,38 +168,29 @@
         h3 {
             font-weight: 700;
             color: #1F2937;
-            /* Cool Gray 800 */
         }
 
         h1 {
             font-size: 2.25rem;
-            /* 36px */
             line-height: 2.5rem;
-            /* 40px */
             margin-bottom: 1rem;
         }
 
         h2 {
             font-size: 1.875rem;
-            /* 30px */
             line-height: 2.25rem;
-            /* 36px */
             margin-top: 2rem;
             margin-bottom: 0.75rem;
             border-bottom: 2px solid #D1D5DB;
-            /* Cool Gray 300 */
             padding-bottom: 0.5rem;
         }
 
         h3 {
             font-size: 1.5rem;
-            /* 24px */
             line-height: 2rem;
-            /* 32px */
             margin-top: 1.5rem;
             margin-bottom: 0.5rem;
             color: #374151;
-            /* Cool Gray 700 */
         }
 
         /* Paragraphs and lists */
@@ -146,7 +198,6 @@
         ul,
         li {
             color: #4B5563;
-            /* Cool Gray 600 */
             line-height: 1.75;
             margin-bottom: 0.75rem;
         }
@@ -182,35 +233,57 @@
     </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800">
-
-    <aside id="sidebar"
-        class="sidebar sidebar-closed fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-gray-800 to-gray-900 text-white p-6 space-y-4 overflow-y-auto shadow-xl lg:translate-x-0 lg:shadow-none">
-        <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 mb-4">TypeScript Guide</h2>
-        <nav id="sidebarNav" class="mb-6">
+<body class="bg-gray-50 text-gray-900">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200 p-6 space-y-6 overflow-y-auto transition-transform duration-300 transform -translate-x-full lg:translate-x-0">
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-800">TypeScript Guide</h2>
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <nav id="sidebarNav" class="space-y-1">
+            <!-- Navigation items will be populated by JavaScript -->
         </nav>
-        <div class="mt-auto pt-4 border-t border-gray-700">
-            <a href="excersizes.html" class="flex items-center space-x-2 px-4 py-2 text-gray-200 hover:bg-gray-700 rounded-md transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Practice Exercises</span>
+
+        <div class="mt-auto pt-6 border-t border-gray-200">
+            <a href="excersizes.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200 group">
+                <div class="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-tasks text-sm"></i>
+                </div>
+                <span class="font-medium">Practice Exercises</span>
+                <i class="fas fa-arrow-right ml-auto text-gray-400 group-hover:text-blue-500 transition-colors"></i>
             </a>
         </div>
     </aside>
 
-    <button id="menuButton"
-        class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-indigo-600 text-white rounded-md shadow-lg hover:bg-indigo-700 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-        </svg>
+    <!-- Mobile menu button -->
+    <button id="mobileMenuButton" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors">
+        <i class="fas fa-bars text-lg"></i>
     </button>
 
-    <main id="mainContent" class="lg:ml-64 p-4 md:p-8 transition-all duration-300">
-        <header class="main-header text-white p-6 md:p-10 rounded-lg shadow-lg mb-8">
-            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Comprehensive TypeScript Tutorial</h1>
-            <p class="mt-2 text-lg md:text-xl opacity-90">Your complete guide to mastering TypeScript, from basics to
-                advanced concepts.</p>
+    <main id="mainContent" class="min-h-screen transition-all duration-300 lg:ml-72">
+        <!-- Hero Section -->
+        <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-16 md:py-24">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Comprehensive TypeScript Tutorial</h1>
+                    <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
+                        Your complete guide to mastering TypeScript, from basics to advanced concepts.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#getting-started" class="px-6 py-3 bg-white text-blue-700 font-medium rounded-lg shadow-md hover:bg-gray-100 transition-colors inline-flex items-center justify-center">
+                            Get Started
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="excersizes.html" class="px-6 py-3 border-2 border-white text-white font-medium rounded-lg hover:bg-white hover:bg-opacity-10 transition-colors inline-flex items-center justify-center">
+                            <i class="fas fa-tasks mr-2"></i>
+                            Try Exercises
+                        </a>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div id="contentContainer" class="bg-white p-6 md:p-8 rounded-lg shadow-xl">
