@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Tutorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Using Inter font as specified */
+            scroll-behavior: smooth;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar-open {
+            transform: translateX(0);
+        }
+
+        .sidebar-closed {
+            transform: translateX(-100%);
+        }
+
+        /* Active link styling */
+        .sidebar-link.active {
+            background-color: #4F46E5;
+            /* Indigo-600 */
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Content section styling */
+        .content-section {
+            padding-top: 1.5rem;
+            /* 24px */
+            padding-bottom: 1.5rem;
+            /* 24px */
+            border-bottom: 1px solid #e5e7eb;
+            /* Cool Gray 200 */
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        /* Code block styling */
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            /* 8px */
+            padding: 1rem;
+            /* 16px */
+            margin-top: 0.5rem;
+            /* 8px */
+            margin-bottom: 1rem;
+            /* 16px */
+            overflow-x: auto;
+            background-color: #2d2d2d;
+            /* Prism Tomorrow background */
+        }
+
+        code[class*="language-"] {
+            font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            /* 14px */
+        }
+
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Header styling */
+        .main-header {
+            background: linear-gradient(to right, #6366F1, #8B5CF6);
+            /* Indigo to Purple gradient */
+        }
+
+        /* Headings */
+        h1,
+        h2,
+        h3 {
+            font-weight: 700;
+            color: #1F2937;
+            /* Cool Gray 800 */
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            /* 36px */
+            line-height: 2.5rem;
+            /* 40px */
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.875rem;
+            /* 30px */
+            line-height: 2.25rem;
+            /* 36px */
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid #D1D5DB;
+            /* Cool Gray 300 */
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            /* 24px */
+            line-height: 2rem;
+            /* 32px */
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            /* Cool Gray 700 */
+        }
+
+        /* Paragraphs and lists */
+        p,
+        ul,
+        li {
+            color: #4B5563;
+            /* Cool Gray 600 */
+            line-height: 1.75;
+            margin-bottom: 0.75rem;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+
+        strong {
+            color: #111827;
+            /* Cool Gray 900 */
+        }
+
+        a {
+            color: #4F46E5;
+            /* Indigo-600 */
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #3730A3;
+            /* Indigo-800 */
+        }
+
+        /* Mobile menu button */
+        #menuButton {
+            z-index: 50;
+            /* Ensure it's above other content */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <aside id="sidebar"
+        class="sidebar sidebar-closed fixed inset-y-0 left-0 z-40 w-64 bg-gradient-to-b from-gray-800 to-gray-900 text-white p-6 space-y-4 overflow-y-auto shadow-xl lg:translate-x-0 lg:shadow-none">
+        <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 mb-4">TypeScript Guide</h2>
+        <nav id="sidebarNav">
+        </nav>
+    </aside>
+
+    <button id="menuButton"
+        class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-indigo-600 text-white rounded-md shadow-lg hover:bg-indigo-700 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+    </button>
+
+    <main id="mainContent" class="lg:ml-64 p-4 md:p-8 transition-all duration-300">
+        <header class="main-header text-white p-6 md:p-10 rounded-lg shadow-lg mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Comprehensive TypeScript Tutorial</h1>
+            <p class="mt-2 text-lg md:text-xl opacity-90">Your complete guide to mastering TypeScript, from basics to
+                advanced concepts.</p>
+        </header>
+
+        <div id="contentContainer" class="bg-white p-6 md:p-8 rounded-lg shadow-xl">
+            <section id="introduction" class="content-section">
+                <h1>Introduction to TypeScript</h1>
+                <h2>What is TypeScript?</h2>
+                <ul>
+                    <li>A <strong>superset</strong> of JavaScript developed by Microsoft</li>
+                    <li>Adds <strong>static typing</strong> to JavaScript</li>
+                    <li>Compiles down to plain JavaScript</li>
+                    <li>Open source language</li>
+                </ul>
+                <h2>Why Use TypeScript?</h2>
+                <ul>
+                    <li><strong>Catch errors earlier</strong> (at compile time vs. runtime)</li>
+                    <li>Better <strong>code completion</strong> and <strong>IntelliSense</strong></li>
+                    <li>Improved <strong>code maintainability</strong> for larger projects</li>
+                    <li>Better <strong>documentation</strong> through type annotations</li>
+                    <li>Enhanced <strong>refactoring</strong> capabilities</li>
+                </ul>
+                <h2>Example: JavaScript vs TypeScript</h2>
+                <h3>JavaScript:</h3>
+                <pre><code class="language-javascript">
+function add(a, b) {
+  return a + b;
+}
+
+// These all work, but some might not be what you intended
+console.log(add(5, 3));         // 8
+console.log(add("5", 3));       // "53"
+console.log(add(true, false));  // 1
+                </code></pre>
+                <h3>TypeScript:</h3>
+                <pre><code class="language-typescript">
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+console.log(add(5, 3));         // 8
+// console.log(add("5", 3));    // Error: Argument of type 'string' is not assignable to parameter of type 'number'
+// console.log(add(true, false)); // Error: Argument of type 'boolean' is not assignable to parameter of type 'number'
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: TypeScript errors are shown as comments to prevent runtime
+                    errors in a JS environment if this code were run directly.</p>
+                <h2>Real-World Applications</h2>
+                <ul>
+                    <li><strong>Angular</strong> framework is built with TypeScript</li>
+                    <li><strong>Microsoft</strong> uses TypeScript for many projects</li>
+                    <li><strong>Slack</strong>, <strong>Airbnb</strong>, and <strong>Asana</strong> use TypeScript</li>
+                    <li>Increasingly adopted in enterprise environments</li>
+                </ul>
+            </section>
+
+            <section id="setup" class="content-section">
+                <h1>Setting Up Your Development Environment</h1>
+                <h2>Installing Node.js and npm</h2>
+                <ul>
+                    <li>Download and install from <a href="https://nodejs.org/" target="_blank"
+                            rel="noopener noreferrer" class="hover:underline">nodejs.org</a></li>
+                    <li>Verify installation:</li>
+                </ul>
+                <pre><code class="language-bash">
+node -v
+npm -v
+                </code></pre>
+                <h2>Installing TypeScript</h2>
+                <ul>
+                    <li>Install globally using npm:</li>
+                </ul>
+                <pre><code class="language-bash">
+npm install -g typescript
+                </code></pre>
+                <ul>
+                    <li>Verify installation:</li>
+                </ul>
+                <pre><code class="language-bash">
+tsc -v
+                </code></pre>
+                <h2>Setting Up VS Code</h2>
+                <ul>
+                    <li>Download and install from <a href="https://code.visualstudio.com/" target="_blank"
+                            rel="noopener noreferrer" class="hover:underline">code.visualstudio.com</a></li>
+                    <li>Recommended extensions:
+                        <ul>
+                            <li><strong>TypeScript Extension Pack</strong></li>
+                            <li><strong>ESLint</strong></li>
+                            <li><strong>Prettier</strong></li>
+                        </ul>
+                    </li>
+                </ul>
+                <h2>Example: Creating a TypeScript Project</h2>
+                <pre><code class="language-bash">
+# Create a new project folder
+mkdir my-ts-project
+cd my-ts-project
+
+# Initialize npm project
+npm init -y
+
+# Install TypeScript locally
+npm install typescript --save-dev
+
+# Create a tsconfig.json file
+npx tsc --init
+                </code></pre>
+            </section>
+
+            <section id="first-program" class="content-section">
+                <h1>Your First TypeScript Program</h1>
+                <h2>Creating a TypeScript File</h2>
+                <ul>
+                    <li>Create a file with <code>.ts</code> extension</li>
+                    <li>Example: <code>hello.ts</code></li>
+                </ul>
+                <h2>Basic Syntax</h2>
+                <ul>
+                    <li>TypeScript syntax is JavaScript syntax with type annotations</li>
+                    <li>Type annotations use <code>:</code> followed by the type</li>
+                </ul>
+                <h2>Example: Hello TypeScript</h2>
+                <pre><code class="language-typescript">
+// hello.ts
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+const userName: string = "TypeScript";
+console.log(greet(userName));
+                </code></pre>
+                <h2>Compiling TypeScript</h2>
+                <ul>
+                    <li>Use the TypeScript compiler (tsc):</li>
+                </ul>
+                <pre><code class="language-bash">
+tsc hello.ts
+                </code></pre>
+                <ul>
+                    <li>This creates <code>hello.js</code> that can run in any JavaScript environment</li>
+                    <li>Run the compiled code:</li>
+                </ul>
+                <pre><code class="language-bash">
+node hello.js
+                </code></pre>
+                <h2>Example: Compilation Output</h2>
+                <h3>TypeScript (hello.ts):</h3>
+                <pre><code class="language-typescript">
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+const userName: string = "TypeScript";
+console.log(greet(userName));
+                </code></pre>
+                <h3>Compiled JavaScript (hello.js):</h3>
+                <pre><code class="language-javascript">
+function greet(name) {
+  return "Hello, " + name + "!";
+}
+
+var userName = "TypeScript";
+console.log(greet(userName));
+                </code></pre>
+            </section>
+
+            <section id="compiler-config" class="content-section">
+                <h1>TypeScript Compiler Configuration</h1>
+                <h2>The tsconfig.json File</h2>
+                <ul>
+                    <li>Central configuration file for TypeScript projects</li>
+                    <li>Created with <code>tsc --init</code></li>
+                    <li>Controls compiler behavior and options</li>
+                </ul>
+                <h2>Key Configuration Options</h2>
+                <ul>
+                    <li><strong>target</strong>: JavaScript version to compile to (e.g., ES5, ES6)</li>
+                    <li><strong>module</strong>: Module system (CommonJS, ES6, etc.)</li>
+                    <li><strong>rootDir</strong>: Source files location</li>
+                    <li><strong>outDir</strong>: Compiled output location</li>
+                    <li><strong>strict</strong>: Enable strict type checking</li>
+                    <li><strong>noImplicitAny</strong>: Raise error on expressions with implied 'any' type</li>
+                </ul>
+                <h2>Example: Basic tsconfig.json</h2>
+                <pre><code class="language-json">
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "CommonJS",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "noImplicitAny": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
+                </code></pre>
+                <h2>Compiling with tsconfig.json</h2>
+                <ul>
+                    <li>When tsconfig.json exists, simply run:</li>
+                </ul>
+                <pre><code class="language-bash">
+tsc
+                </code></pre>
+                <ul>
+                    <li>TypeScript will use the configuration options automatically</li>
+                    <li>Watch mode for automatic recompilation:</li>
+                </ul>
+                <pre><code class="language-bash">
+tsc --watch
+                </code></pre>
+            </section>
+
+            <section id="basic-types" class="content-section">
+                <h1>Basic Types in TypeScript</h1>
+                <h2>Primitive Types</h2>
+                <ul>
+                    <li><strong>number</strong>: All numeric values (integer and floating-point)</li>
+                    <li><strong>string</strong>: Text values</li>
+                    <li><strong>boolean</strong>: true/false values</li>
+                </ul>
+                <h2>Example: Primitive Types</h2>
+                <pre><code class="language-typescript">
+// Number type
+let age: number = 25;
+let price: number = 19.99;
+let hexValue: number = 0xFF; // 255 in decimal
+
+// String type
+let firstName: string = "John";
+let greeting: string = `Hello, ${firstName}!`;
+
+// Boolean type
+let isActive: boolean = true;
+let hasPermission: boolean = false;
+                </code></pre>
+                <h2>Arrays</h2>
+                <ul>
+                    <li>Typed collections of elements</li>
+                    <li>Two syntax options:
+                        <ul>
+                            <li><code>type[]</code></li>
+                            <li><code>Array&lt;type&gt;</code></li>
+                        </ul>
+                    </li>
+                </ul>
+                <h2>Example: Arrays</h2>
+                <pre><code class="language-typescript">
+// Number array
+let scores: number[] = [85, 92, 78, 90];
+let grades: Array&lt;number&gt; = [3.8, 3.9, 4.0];
+
+// String array
+let names: string[] = ["Alice", "Bob", "Charlie"];
+
+// Mixed arrays are not allowed with specific types
+// This will cause an error:
+// let mixed: number[] = [1, "two", 3]; // Error!
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: The error line is commented out to ensure the example is
+                    illustrative without breaking in a pure JS context.</p>
+                <h2>Tuples</h2>
+                <ul>
+                    <li>Fixed-length arrays with elements of specific types</li>
+                    <li>Order and types are important</li>
+                </ul>
+                <h2>Example: Tuples</h2>
+                <pre><code class="language-typescript">
+// Define a tuple type: [string, number]
+let person: [string, number] = ["Alice", 25];
+
+// Accessing tuple elements
+console.log(person[0]); // "Alice"
+console.log(person[1]); // 25
+
+// Error: Type mismatch
+// person = [25, "Alice"]; // Error: Type 'number' is not assignable to type 'string'
+
+// Error: Too many elements
+// person = ["Alice", 25, true]; // Error: Source has 3 elements but target allows only 2
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error lines are commented for illustration.</p>
+                <h2>Enums</h2>
+                <ul>
+                    <li>Named constants for related values</li>
+                    <li>Makes code more readable and maintainable</li>
+                </ul>
+                <h2>Example: Enums</h2>
+                <pre><code class="language-typescript">
+// Numeric enum (default starts at 0)
+enum Direction {
+  North,
+  East,
+  South,
+  West
+}
+
+let myDirection: Direction = Direction.North;
+console.log(myDirection); // 0
+
+// String enum
+enum HttpStatus {
+  OK = "OK",
+  NotFound = "NOT_FOUND",
+  ServerError = "SERVER_ERROR"
+}
+
+let status: HttpStatus = HttpStatus.OK;
+console.log(status); // "OK"
+                </code></pre>
+                <h2>Type Inference</h2>
+                <ul>
+                    <li>TypeScript can automatically determine types</li>
+                    <li>Explicit type annotations not always needed</li>
+                </ul>
+                <h2>Example: Type Inference</h2>
+                <pre><code class="language-typescript">
+// Type inference for primitives
+let message = "Hello"; // TypeScript infers type as string
+// message = 42; // Error: Type 'number' is not assignable to type 'string'
+
+// Type inference for arrays
+let numbers = [1, 2, 3]; // TypeScript infers type as number[]
+// numbers.push("four"); // Error: Argument of type 'string' is not assignable to parameter of type 'number'
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error lines are commented for illustration.</p>
+            </section>
+
+            <section id="functions" class="content-section">
+                <h1>Functions in TypeScript</h1>
+                <h2>Function Type Annotations</h2>
+                <ul>
+                    <li>Parameter types</li>
+                    <li>Return type</li>
+                    <li>Optional and default parameters</li>
+                </ul>
+                <h2>Example: Basic Function Types</h2>
+                <pre><code class="language-typescript">
+// Function with parameter and return type annotations
+function multiply(a: number, b: number): number {
+  return a * b;
+}
+
+// Arrow function with type annotations
+const divide = (a: number, b: number): number => {
+  return a / b;
+};
+
+// Void return type (function doesn't return a value)
+function logMessage(message: string): void {
+  console.log(message);
+}
+                </code></pre>
+                <h2>Optional Parameters</h2>
+                <ul>
+                    <li>Marked with <code>?</code> after parameter name</li>
+                    <li>Must come after required parameters</li>
+                </ul>
+                <h2>Example: Optional Parameters</h2>
+                <pre><code class="language-typescript">
+// Function with optional parameter
+function buildName(firstName: string, lastName?: string): string {
+  if (lastName) {
+    return `${firstName} ${lastName}`;
+  } else {
+    return firstName;
+  }
+}
+
+// Valid calls
+console.log(buildName("John", "Doe"));  // "John Doe"
+console.log(buildName("John"));         // "John"
+                </code></pre>
+                <h2>Default Parameters</h2>
+                <ul>
+                    <li>Provide default values for parameters</li>
+                    <li>Used when argument is not provided or undefined</li>
+                </ul>
+                <h2>Example: Default Parameters</h2>
+                <pre><code class="language-typescript">
+// Function with default parameter
+function greet(name: string, greeting: string = "Hello"): string {
+  return `${greeting}, ${name}!`;
+}
+
+// Valid calls
+console.log(greet("John", "Hi"));     // "Hi, John!"
+console.log(greet("John"));           // "Hello, John!"
+                </code></pre>
+                <h2>Function Types</h2>
+                <ul>
+                    <li>Describe the signature of a function</li>
+                    <li>Can be used for variables, parameters, and properties</li>
+                </ul>
+                <h2>Example: Function Types</h2>
+                <pre><code class="language-typescript">
+// Define a function type
+type MathOperation = (x: number, y: number) => number;
+
+// Use the function type for a variable
+let add: MathOperation = (a, b) => a + b;
+let subtract: MathOperation = (a, b) => a - b;
+
+// Use the function type as a parameter
+function calculate(a: number, b: number, operation: MathOperation): number {
+  return operation(a, b);
+}
+
+// Call the function
+console.log(calculate(10, 5, add));      // 15
+console.log(calculate(10, 5, subtract)); // 5
+                </code></pre>
+            </section>
+
+            <section id="objects" class="content-section">
+                <h1>Objects and Interfaces in TypeScript</h1>
+                <h2>Object Type Annotations</h2>
+                <ul>
+                    <li>Define the shape of objects</li>
+                    <li>Specify property types</li>
+                    <li>Can include optional and readonly properties</li>
+                </ul>
+                <h2>Example: Object Type Annotations</h2>
+                <pre><code class="language-typescript">
+// Object with inline type annotation
+let person: { name: string; age: number } = {
+  name: "Alice",
+  age: 30
+};
+
+// Accessing properties
+console.log(person.name); // "Alice"
+console.log(person.age);  // 30
+
+// Error: Property doesn't exist
+// console.log(person.email); // Error: Property 'email' does not exist on type '{ name: string; age: number }'
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error line is commented for illustration.</p>
+                <h2>Type Aliases</h2>
+                <ul>
+                    <li>Create reusable type definitions</li>
+                    <li>Improve code readability</li>
+                    <li>Can be used for any type, not just objects</li>
+                </ul>
+                <h2>Example: Type Aliases</h2>
+                <pre><code class="language-typescript">
+// Define a type alias for a person object
+type Person = {
+  name: string;
+  age: number;
+  email?: string; // Optional property
+};
+
+// Use the type alias
+let student: Person = {
+  name: "Bob",
+  age: 22
+};
+
+let teacher: Person = {
+  name: "Dr. Smith",
+  age: 45,
+  email: "smith@university.edu"
+};
+                </code></pre>
+                <h2>Readonly Properties</h2>
+                <ul>
+                    <li>Prevent modification of properties after initialization</li>
+                    <li>Enforced at compile time, not runtime</li>
+                </ul>
+                <h2>Example: Readonly Properties</h2>
+                <pre><code class="language-typescript">
+// Object type with readonly property
+type Point = {
+  readonly x: number;
+  readonly y: number;
+};
+
+// Create a point
+let origin: Point = { x: 0, y: 0 };
+
+// Error: Cannot modify readonly property
+// origin.x = 10; // Error: Cannot assign to 'x' because it is a read-only property
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error line is commented for illustration.</p>
+                <h2>Interfaces</h2>
+                <ul>
+                    <li>Similar to type aliases for objects</li>
+                    <li>Can be extended and implemented</li>
+                    <li>Used primarily for object shapes</li>
+                </ul>
+                <h2>Example: Interfaces</h2>
+                <pre><code class="language-typescript">
+// Define an interface
+interface Vehicle {
+  make: string;
+  model: string;
+  year: number;
+}
+
+// Use the interface
+let car: Vehicle = {
+  make: "Toyota",
+  model: "Corolla",
+  year: 2020
+};
+
+// Extending interfaces
+interface ElectricVehicle extends Vehicle {
+  batteryCapacity: number;
+  range: number;
+}
+
+// Use the extended interface
+let tesla: ElectricVehicle = {
+  make: "Tesla",
+  model: "Model 3",
+  year: 2022,
+  batteryCapacity: 75,
+  range: 310
+};
+                </code></pre>
+            </section>
+
+            <section id="advanced-types" class="content-section">
+                <h1>Advanced Types in TypeScript</h1>
+                <h2>Union Types</h2>
+                <ul>
+                    <li>Allow a value to be one of several types</li>
+                    <li>Use the <code>|</code> operator between types</li>
+                </ul>
+                <h2>Example: Union Types</h2>
+                <pre><code class="language-typescript">
+// Variable that can be either string or number
+let id: string | number;
+
+id = "abc123";  // Valid
+id = 456;       // Valid
+// id = true;      // Error: Type 'boolean' is not assignable to type 'string | number'
+
+// Function that accepts union type
+function printId(id: string | number) {
+  console.log(`ID: ${id}`);
+  
+  // Type narrowing
+  if (typeof id === "string") {
+    // In this block, TypeScript knows id is a string
+    console.log(id.toUpperCase());
+  } else {
+    // In this block, TypeScript knows id is a number
+    console.log(id.toFixed(2));
+  }
+}
+printId("testID");
+printId(123.456);
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error line is commented for illustration.</p>
+                <h2>Intersection Types</h2>
+                <ul>
+                    <li>Combine multiple types into one</li>
+                    <li>Use the <code>&</code> operator between types</li>
+                    <li>Must satisfy all the combined types</li>
+                </ul>
+                <h2>Example: Intersection Types</h2>
+                <pre><code class="language-typescript">
+// Define two types
+type Employee = {
+  id: number;
+  name: string;
+};
+
+type Manager = {
+  department: string;
+  reports: number;
+};
+
+// Create an intersection type
+type ManagerWithEmployeeInfo = Employee & Manager;
+
+// Use the intersection type
+let seniorManager: ManagerWithEmployeeInfo = {
+  id: 12345,
+  name: "Jane Smith",
+  department: "Engineering",
+  reports: 5
+};
+
+// Error: Missing properties
+/*
+let juniorManager: ManagerWithEmployeeInfo = {
+  id: 67890,
+  name: "John Doe"
+  // Error: Property 'department' is missing
+  // Error: Property 'reports' is missing
+};
+*/
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error block is commented for illustration.</p>
+                <h2>Literal Types</h2>
+                <ul>
+                    <li>Specific values (not just types)</li>
+                    <li>Useful for restricting values to a set of options</li>
+                </ul>
+                <h2>Example: Literal Types</h2>
+                <pre><code class="language-typescript">
+// String literal type
+type Direction = "north" | "south" | "east" | "west";
+
+function move(direction: Direction) {
+  console.log(`Moving ${direction}`);
+}
+
+move("north");  // Valid
+// move("up");     // Error: Argument of type '"up"' is not assignable to parameter of type 'Direction'
+
+// Numeric literal type
+type DiceRoll = 1 | 2 | 3 | 4 | 5 | 6;
+
+function rollDice(): DiceRoll {
+  return Math.floor(Math.random() * 6) + 1 as DiceRoll;
+}
+console.log("Rolled a " + rollDice());
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error line is commented for illustration.</p>
+                <h2>Nullable Types</h2>
+                <ul>
+                    <li>Handle null and undefined values</li>
+                    <li>Use union types with null/undefined</li>
+                    <li>Requires <code>strictNullChecks</code> compiler option (assumed enabled for these examples)</li>
+                </ul>
+                <h2>Example: Nullable Types</h2>
+                <pre><code class="language-typescript">
+// With strictNullChecks enabled (conceptual example)
+let nameStrict: string;
+nameStrict = "Alice";
+// nameStrict = null;      // Error: Type 'null' is not assignable to type 'string'
+// nameStrict = undefined; // Error: Type 'undefined' is not assignable to type 'string'
+
+// Explicitly allow null or undefined
+let username: string | null | undefined;
+username = "bob123";
+username = null;      // Valid
+username = undefined; // Valid
+                </code></pre>
+                <p class="mt-2 text-sm text-gray-500">Note: Error lines are commented for illustration. Actual behavior
+                    depends on <code>tsconfig.json</code>.</p>
+                <h2>Optional Property Access Operator</h2>
+                <ul>
+                    <li>Safely access properties that might be null or undefined</li>
+                    <li>Use the <code>?.</code> operator</li>
+                    <li>Returns undefined if the object is null or undefined</li>
+                </ul>
+                <h2>Example: Optional Property Access</h2>
+                <pre><code class="language-typescript">
+// Define user type for clarity
+type User = {
+    name: string;
+    address?: { city: string };
+};
+
+// Original function for comparison (if needed, but direct use of ?. is clearer)
+/*
+function getUserCityWithoutOptionalChaining(user: User) {
+  if (user.address) {
+    return user.address.city;
+  }
+  return undefined;
+}
+*/
+
+// With optional chaining
+function getUserCity(user: User): string | undefined {
+  return user.address?.city;
+}
+
+// Example usage
+const user1: User = {
+  name: "Alice",
+  address: { city: "New York" }
+};
+
+const user2: User = {
+  name: "Bob"
+  // No address property
+};
+
+console.log(getUserCity(user1)); // "New York"
+console.log(getUserCity(user2)); // undefined
+                </code></pre>
+            </section>
+
+            <section id="conclusion" class="content-section">
+                <h1>Conclusion and Next Steps</h1>
+                <h2>Key Takeaways</h2>
+                <ul>
+                    <li>TypeScript adds <strong>static typing</strong> to JavaScript</li>
+                    <li>Benefits include:
+                        <ul>
+                            <li>Earlier error detection</li>
+                            <li>Better code completion</li>
+                            <li>Improved maintainability</li>
+                            <li>Enhanced documentation</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h2>TypeScript Ecosystem</h2>
+                <ul>
+                    <li>Works with all JavaScript frameworks</li>
+                    <li>Strong community support</li>
+                    <li>Regular updates and improvements</li>
+                    <li>Extensive documentation</li>
+                </ul>
+                <h2>Resources for Further Learning</h2>
+                <ul>
+                    <li><a href="https://www.typescriptlang.org/docs/" target="_blank"
+                            rel="noopener noreferrer">Official TypeScript Documentation</a></li>
+                    <li><a href="https://www.typescriptlang.org/docs/handbook/intro.html" target="_blank"
+                            rel="noopener noreferrer">TypeScript Handbook</a></li>
+                    <li><a href="https://www.typescriptlang.org/play" target="_blank"
+                            rel="noopener noreferrer">TypeScript Playground</a></li>
+                    <li><a href="https://github.com/DefinitelyTyped/DefinitelyTyped" target="_blank"
+                            rel="noopener noreferrer">Definitely Typed</a> - Type definitions for JavaScript libraries
+                    </li>
+                </ul>
+                <h2>Next Steps in Your TypeScript Journey</h2>
+                <ul>
+                    <li>Explore classes and interfaces in depth</li>
+                    <li>Learn about generics</li>
+                    <li>Understand decorators</li>
+                    <li>Integrate TypeScript with frameworks (React, Angular, Vue)</li>
+                    <li>Contribute to open source TypeScript projects</li>
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const menuButton = document.getElementById('menuButton');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarNav = document.getElementById('sidebarNav');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Titles for navigation links, corresponding to section IDs
+            const navItems = [
+                { id: 'introduction', title: 'Introduction' },
+                { id: 'setup', title: 'Setup Environment' },
+                { id: 'first-program', title: 'First Program' },
+                { id: 'compiler-config', title: 'Compiler Config' },
+                { id: 'basic-types', title: 'Basic Types' },
+                { id: 'functions', title: 'Functions' },
+                { id: 'objects', title: 'Objects & Interfaces' },
+                { id: 'advanced-types', title: 'Advanced Types' },
+                { id: 'conclusion', title: 'Conclusion' }
+            ];
+
+            // Populate sidebar navigation
+            navItems.forEach(item => {
+                const link = document.createElement('a');
+                link.href = `#${item.id}`;
+                link.textContent = item.title;
+                link.classList.add('sidebar-link', 'block', 'py-2.5', 'px-4', 'rounded-lg', 'hover:bg-indigo-500', 'hover:text-white', 'transition-colors', 'duration-200');
+                link.addEventListener('click', (e) => {
+                    // Smooth scroll
+                    // e.preventDefault(); // Keep for SPA-like behavior if not using native scroll
+                    // document.getElementById(item.id).scrollIntoView({ behavior: 'smooth' });
+
+                    // Close sidebar on mobile after click
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.add('sidebar-closed');
+                        sidebar.classList.remove('sidebar-open');
+                    }
+                    // Update active link
+                    updateActiveLink(link);
+                });
+                sidebarNav.appendChild(link);
+            });
+
+            // Function to update active link in sidebar
+            function updateActiveLink(activeLink) {
+                document.querySelectorAll('#sidebarNav a').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+
+            // Toggle sidebar for mobile
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('sidebar-closed');
+                sidebar.classList.toggle('sidebar-open');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            mainContent.addEventListener('click', () => {
+                if (window.innerWidth < 1024 && sidebar.classList.contains('sidebar-open')) {
+                    sidebar.classList.add('sidebar-closed');
+                    sidebar.classList.remove('sidebar-open');
+                }
+            });
+
+            // Intersection Observer for active link highlighting on scroll
+            const observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.5 // 50% of the section is visible
+            };
+
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const intersectingId = entry.target.id;
+                        const correspondingLink = document.querySelector(`#sidebarNav a[href="#${intersectingId}"]`);
+                        updateActiveLink(correspondingLink);
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            contentSections.forEach(section => observer.observe(section));
+
+            // Initial active link check based on URL hash or first item
+            const currentHash = window.location.hash;
+            let initialLink;
+            if (currentHash) {
+                initialLink = document.querySelector(`#sidebarNav a[href="${currentHash}"]`);
+            }
+            if (!initialLink && navItems.length > 0) {
+                initialLink = document.querySelector(`#sidebarNav a[href="#${navItems[0].id}"]`);
+            }
+            if (initialLink) {
+                updateActiveLink(initialLink);
+            }
+
+
+            // Ensure Prism.js runs after content is potentially dynamically loaded or ready
+            // It's deferred, but this is an extra check if needed.
+            if (window.Prism) {
+                window.Prism.highlightAll();
+            } else {
+                // Fallback or retry if Prism not loaded, though defer should handle it.
+                console.warn("Prism.js not loaded yet. Syntax highlighting might be delayed.");
+            }
+        });
+    </script>
+</body>
+
+</html>
