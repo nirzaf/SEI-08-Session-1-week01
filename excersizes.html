@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Exercises - Interactive Learning Path</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .sidebar-item.active {
+            background-color: #e0f2fe; /* light-blue-100 */
+            color: #0284c7; /* sky-600 */
+            border-left: 4px solid #0ea5e9; /* sky-500 */
+            font-weight: 600;
+        }
+        .sidebar-item:hover {
+            background-color: #f0f9ff; /* sky-50 */
+        }
+        .progress-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+        /* Styling for details/summary */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        .code-block-container {
+            position: relative;
+        }
+        .copy-code-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #4a5568; /* gray-700 */
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .code-block-container:hover .copy-code-button {
+            opacity: 1;
+        }
+        .copy-code-button:hover {
+            background-color: #2d3748; /* gray-800 */
+        }
+        /* Print styles */
+        @media print {
+            .sidebar, .mobile-menu-button, .print-hide {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 1rem !important;
+            }
+            .content-section {
+                display: block !important; /* Ensure all sections are visible for printing */
+                page-break-after: always;
+                margin-bottom: 2rem;
+            }
+            .content-section:last-of-type {
+                page-break-after: avoid;
+            }
+            .bg-white {
+                box-shadow: none !important;
+                border: 1px solid #e5e7eb;
+            }
+            pre {
+                white-space: pre-wrap !important; /* Allow code to wrap */
+                word-break: break-all !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        <button id="mobile-menu-button" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-md shadow-lg print-hide">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+
+        <div id="sidebar" class="bg-white shadow-xl lg:w-80 w-full lg:translate-x-0 transform -translate-x-full lg:static fixed lg:h-screen h-full overflow-y-auto p-5 transition-transform duration-300 ease-in-out z-40 print-hide">
+            <div class="mb-6">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-3xl font-bold text-blue-600">TypeScript Path</h1>
+                    <button id="close-sidebar-button" class="lg:hidden text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">Interactive Learning Exercises</p>
+            </div>
+
+            <div class="mb-6">
+                <p class="text-gray-700 mb-1 font-medium">Your Progress <span id="progress-count" class="font-bold">0</span>/8</p>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progress-bar-fill" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+                <button id="reset-progress-button" class="mt-2 text-xs text-red-500 hover:text-red-700 underline">Reset Progress</button>
+            </div>
+
+            <nav>
+                <ul class="space-y-1.5">
+                    <li><a href="#welcome" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="welcome"><i class="fas fa-home mr-3 w-5 text-center"></i>Welcome</a></li>
+                    <li><a href="#intro" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="intro"><i class="fas fa-book-open mr-3 w-5 text-center"></i>1. Introduction</a></li>
+                    <li><a href="#setup" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="setup"><i class="fas fa-tools mr-3 w-5 text-center"></i>2. Setup Environment</a></li>
+                    <li><a href="#first-program" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="first-program"><i class="fas fa-code mr-3 w-5 text-center"></i>3. First Program</a></li>
+                    <li><a href="#compiler" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="compiler"><i class="fas fa-cogs mr-3 w-5 text-center"></i>4. Compiler Config</a></li>
+                    <li><a href="#basic-types" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="basic-types"><i class="fas fa-cube mr-3 w-5 text-center"></i>5. Basic Types</a></li>
+                    <li><a href="#functions" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="functions"><i class="fas fa-project-diagram mr-3 w-5 text-center"></i>6. Functions</a></li>
+                    <li><a href="#objects" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="objects"><i class="fas fa-object-group mr-3 w-5 text-center"></i>7. Objects & Interfaces</a></li>
+                    <li><a href="#advanced" class="sidebar-item block p-3 rounded-md text-gray-700 hover:bg-sky-50 transition-colors duration-150" data-section="advanced"><i class="fas fa-graduation-cap mr-3 w-5 text-center"></i>8. Advanced Types</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mt-8 p-4 bg-sky-50 rounded-lg border border-sky-200">
+                <h3 class="font-semibold text-sky-700">About This Path</h3>
+                <p class="text-sm text-gray-600 mt-2">Master TypeScript through practical, hands-on exercises designed to reinforce concepts and build real-world skills.</p>
+            </div>
+        </div>
+
+        <main class="main-content flex-1 lg:ml-80 p-4 md:p-8 overflow-y-auto">
+            <section id="welcome" class="content-section active mb-12">
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-10">
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Welcome to TypeScript Exercises!</h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Embark on your journey to TypeScript mastery with these interactive exercises. Select a topic from the sidebar to begin.
+                    </p>
+                
+                    <div class="grid md:grid-cols-3 gap-6 mb-10">
+                        <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                            <i class="fas fa-laptop-code text-3xl text-blue-500 mb-3"></i>
+                            <h3 class="text-xl font-semibold text-blue-700 mb-2">Interactive Learning</h3>
+                            <p class="text-sm text-gray-600">Hands-on coding exercises to solidify your understanding of TypeScript concepts.</p>
+                        </div>
+                        <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                            <i class="fas fa-layer-group text-3xl text-green-500 mb-3"></i>
+                            <h3 class="text-xl font-semibold text-green-700 mb-2">Structured Path</h3>
+                            <p class="text-sm text-gray-600">Progress from basic syntax to advanced type manipulation in a logical sequence.</p>
+                        </div>
+                        <div class="bg-purple-50 p-6 rounded-lg border border-purple-200">
+                            <i class="fas fa-rocket text-3xl text-purple-500 mb-3"></i>
+                            <h3 class="text-xl font-semibold text-purple-700 mb-2">Real-World Skills</h3>
+                            <p class="text-sm text-gray-600">Apply your knowledge to practical scenarios that mimic development challenges.</p>
+                        </div>
+                    </div>
+                
+                    <div class="text-center">
+                        <button id="start-learning-button" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-3 rounded-lg font-semibold text-lg shadow-md hover:shadow-lg transition-all duration-150 transform hover:scale-105">
+                            Start Learning Now <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="intro" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">1. Introduction to TypeScript</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 1: Core Concepts</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="1">
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Understand the differences between TypeScript and JavaScript.</li>
+                            <li>Learn the benefits of static typing.</li>
+                            <li>Grasp the basic TypeScript workflow.</li>
+                            <li>Recognize when to use TypeScript in your projects.</li>
+                        </ul>
+                    </div>
+
+                    <div class="prose max-w-none"> <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">What is TypeScript?</h3>
+                        <p>TypeScript is a statically typed superset of JavaScript developed and maintained by Microsoft. It adds optional static typing and class-based object-oriented programming to JavaScript. With TypeScript, you can catch errors during development rather than at runtime, making your code more robust and maintainable.</p>
+
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Key Differences from JavaScript</h3>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 my-6 rounded-md">
+                            <ul class="list-disc ml-5 space-y-1 text-gray-700">
+                                <li>Static typing with type annotations</li>
+                                <li>Interfaces and type declarations</li>
+                                <li>Advanced object-oriented features (e.g., classes, interfaces, generics)</li>
+                                <li>Generics for creating reusable components</li>
+                                <li>Enhanced IDE support with better autocompletion and error checking</li>
+                            </ul>
+                        </div>
+
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">TypeScript vs JavaScript Example</h3>
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <h4 class="font-semibold mb-2 text-gray-600">JavaScript</h4>
+                                <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// JavaScript
+function add(a, b) {
+  return a + b;
+}
+
+// This works
+console.log(add(5, 3));  // 8
+
+// This also "works" but might not be what you want
+console.log(add("5", 3)); // "53"</code></pre>
+                                    <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2 text-gray-600">TypeScript</h4>
+                                <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// TypeScript
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// This works
+console.log(add(5, 3));  // 8
+
+// This will show a compile-time error
+// console.log(add("5", 3));
+// Argument of type 'string' is not 
+// assignable to parameter of type 'number'.</code></pre>
+                                    <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <p>Notice how TypeScript prevents you from accidentally passing a string where a number is expected, catching potential bugs before they happen.</p>
+
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">When to Use TypeScript</h3>
+                        <ul class="list-disc ml-5 space-y-2">
+                            <li><strong>Large applications:</strong> Type safety becomes more valuable as your codebase grows.</li>
+                            <li><strong>Team projects:</strong> Types serve as documentation and improve collaboration.</li>
+                            <li><strong>Complex domain models:</strong> Types help represent business logic more clearly.</li>
+                            <li><strong>Applications requiring high reliability:</strong> Catch more errors before deployment.</li>
+                        </ul>
+
+                        <hr class="my-8">
+
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+                        
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Identifying Type Errors</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Review the following JavaScript code snippets and identify potential type errors that TypeScript would catch. Then, convert each snippet to TypeScript with proper type annotations.</p>
+                            
+                            <p class="font-medium text-gray-600 mb-2">Snippet 1:</p>
+                            <div class="code-block-container mb-4">
+                                <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// Snippet 1
+function calculateTotal(price, quantity) {
+  return price * quantity;
+}
+
+calculateTotal("10", 5);
+calculateTotal(true, "3");</code></pre>
+                                <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                            </div>
+
+                            <p class="font-medium text-gray-600 mb-2">Snippet 2:</p>
+                            <div class="code-block-container mb-4">
+                                <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// Snippet 2
+let user = {
+  name: "Alice",
+  age: 30
+};
+
+user.email = "alice@example.com";
+user.age = "thirty";</code></pre>
+                                <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                            </div>
+
+                            <p class="font-medium text-gray-600 mb-2">Snippet 3:</p>
+                            <div class="code-block-container mb-4">
+                                <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// Snippet 3
+function displayUserInfo(user) {
+  console.log(\`Name: \${user.name}, Age: \${user.age}\`);
+  return user.isActive;
+}
+
+displayUserInfo({ name: "Bob" });</code></pre>
+                                <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Benefits of TypeScript</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> For each scenario below, explain how TypeScript would help prevent errors or improve development:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>A large team is working on a web application with multiple developers contributing to the same codebase.</li>
+                                <li>A function expects an object with specific properties, but sometimes receives objects with missing properties.</li>
+                                <li>A developer needs to refactor a large JavaScript application to rename a commonly used function.</li>
+                                <li>A new team member needs to understand how to use functions written by other developers.</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>View Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p><strong>For Part A:</strong> Create a `introduction_solutions.ts` file. For each snippet:</p>
+                                    <ul class="list-disc ml-5">
+                                        <li>Identify lines where JavaScript might behave unexpectedly or cause runtime errors due to mismatched types.</li>
+                                        <li>Rewrite the snippet in TypeScript, adding type annotations to variables, function parameters, and return values.</li>
+                                        <li>Example for Snippet 1: `function calculateTotal(price: number, quantity: number): number { return price * quantity; }`</li>
+                                    </ul>
+                                    <p><strong>For Part B:</strong> In your `introduction_solutions.ts` (or as comments):</p>
+                                    <ul class="list-disc ml-5">
+                                        <li>Scenario 1 (Large Team): Discuss how types act as contracts, improve code clarity, and reduce integration issues.</li>
+                                        <li>Scenario 2 (Missing Properties): Explain how interfaces or type aliases define expected shapes, and how TypeScript's compiler catches these errors.</li>
+                                        <li>Scenario 3 (Refactoring): Describe how TypeScript's understanding of code structure aids in safe refactoring (e.g., renaming functions across files).</li>
+                                        <li>Scenario 4 (New Team Member): Highlight how type annotations serve as documentation, making it easier to understand function signatures and data structures.</li>
+                                    </ul>
+                                </div>
+                            </details>
+                        </div>
+                    </div> <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <span></span> <a href="#setup" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="setup">
+                            Next: Setup Environment <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="setup" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">2. Setting Up Your Development Environment</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 2: Environment & Project Setup</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="2">
+                        </div>
+                    </div>
+
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Install Node.js and TypeScript.</li>
+                            <li>Set up a TypeScript project from scratch.</li>
+                            <li>Configure your IDE for TypeScript development.</li>
+                            <li>Understand the basic TypeScript commands.</li>
+                        </ul>
+                    </div>
+
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Installation Verification</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Complete the following tasks to verify your TypeScript development environment setup:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Open your terminal/command prompt.</li>
+                                <li>Run the following commands and note the output:
+                                    <div class="code-block-container my-2">
+                                        <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">node -v
+npm -v
+tsc -v</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </li>
+                                <li>If any of these commands fail, you may need to (re)install Node.js (which includes npm) and TypeScript (`npm install -g typescript`).</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Project Setup</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new TypeScript project with the following steps:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create a new directory called `my-ts-project`.</li>
+                                <li>Navigate to this directory in your terminal.</li>
+                                <li>Initialize a new npm project with default settings (run `npm init -y`).</li>
+                                <li>Install TypeScript as a development dependency (run `npm install --save-dev typescript`).</li>
+                                <li>Create a `tsconfig.json` file (run `npx tsc --init`).</li>
+                                <li>Create the following directory structure:
+                                    <div class="code-block-container my-2">
+                                        <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">my-ts-project/
+├── src/
+│   └── index.ts  // Create an empty index.ts file here
+├── dist/         // This will be created by the compiler
+├── package.json
+└── tsconfig.json</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    (You'll need to manually create the `src` folder and the `index.ts` file inside it.)
+                                </li>
+                                <li>Edit your `tsconfig.json` to specify:
+                                    <ul class="list-disc ml-5">
+                                        <li>Target: `"es6"` (or a more recent version like `"es2020"`)</li>
+                                        <li>Module: `"commonjs"`</li>
+                                        <li>Root directory: `"rootDir": "./src"`</li>
+                                        <li>Output directory: `"outDir": "./dist"`</li>
+                                    </ul>
+                                    Ensure these options are uncommented and set correctly within the `compilerOptions` object in `tsconfig.json`.
+                                </li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>Expected Outcome & Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p>After completing these steps, you should have a `my-ts-project` directory containing a `package.json`, a `tsconfig.json` configured as specified, and an `src` folder with an empty `index.ts` file. The `dist` folder will be created when you first compile your project (e.g., by running `tsc` in the project root).</p>
+                                    <p><strong>Example `tsconfig.json` relevant parts:</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">{
+  "compilerOptions": {
+    "target": "es6",                     /* Specify ECMAScript target version */
+    "module": "commonjs",                /* Specify module code generation */
+    "outDir": "./dist",                  /* Redirect output structure to the directory. */
+    "rootDir": "./src",                  /* Specify the root directory of input files. */
+    "strict": true,                      /* Enable all strict type-checking options. */
+    "esModuleInterop": true,             /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "skipLibCheck": true,                /* Skip type checking of declaration files. */
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
+  },
+  "include": ["src/**/*"],              /* Specifies an array of filenames or patterns to include in the program. */
+  "exclude": ["node_modules", "dist"]   /* Specifies an array of filenames or patterns that should be skipped when resolving include. */
+}</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p>To verify, you can add `console.log("Hello from index.ts");` to `src/index.ts`, run `tsc` in the terminal (while in the `my-ts-project` directory), and then run `node dist/index.js`. You should see "Hello from index.ts" printed.</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#intro" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="intro">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: Introduction
+                        </a>
+                        <a href="#first-program" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="first-program">
+                            Next: First Program <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="first-program" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">3. Your First TypeScript Program</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 3: Hello TypeScript & Type Errors</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="3">
+                        </div>
+                    </div>
+            
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Write a simple TypeScript program.</li>
+                            <li>Understand basic type annotations for function parameters and return values.</li>
+                            <li>Compile TypeScript to JavaScript using the `tsc` command.</li>
+                            <li>Run compiled JavaScript using Node.js.</li>
+                            <li>Observe and understand TypeScript compiler errors.</li>
+                        </ul>
+                    </div>
+            
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Hello TypeScript</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create your first TypeScript program by following these steps:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create a new file called `hello.ts` in the `src` directory of your project (if you created `my-ts-project` in Exercise 2, use that).</li>
+                                <li>Write a function called `greet` that:
+                                    <ul class="list-disc ml-5">
+                                        <li>Takes a parameter `name` of type `string`.</li>
+                                        <li>Returns a string in the format "Hello, {name}!".</li>
+                                        <li>Has proper type annotations for the parameter and return value.</li>
+                                    </ul>
+                                </li>
+                                <li>Call this function with your name and log the result to the console.</li>
+                                <li>Compile your TypeScript file. If you're in your project directory with `tsconfig.json` set up, you can just run `tsc`. Otherwise, run `tsc src/hello.ts`.</li>
+                                <li>Run the resulting JavaScript file (e.g., `node dist/hello.js` if `outDir` is `"./dist"`).</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Experimenting with Type Errors</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Modify your `hello.ts` file to intentionally create type errors:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Try calling the `greet` function with a number instead of a string (e.g., `greet(123)`).</li>
+                                <li>Declare a variable as a string and try assigning a boolean value to it (e.g., `let myMessage: string = true;`).</li>
+                                <li>Modify the `greet` function to try and return a number instead of a string.</li>
+                                <li>Observe the compiler errors that TypeScript generates in your terminal after running `tsc`.</li>
+                                <li>Fix all the errors to make your program compile successfully again.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>View Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p><strong>For Part A (hello.ts):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// src/hello.ts
+function greet(name: string): string {
+  return \`Hello, \${name}!\`;
+}
+
+const myName: string = "YourName"; // Replace YourName with your actual name
+console.log(greet(myName));
+
+// Example of another variable for demonstration
+let message: string = "Welcome to TypeScript";
+console.log(message);</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>For Part B:</strong> When you introduce errors, the `tsc` command will output messages indicating the file, line number, and the nature of the type mismatch. For example:</p>
+                                    <ul class="list-disc ml-5">
+                                        <li>`greet(123);` might result in: `Argument of type 'number' is not assignable to parameter of type 'string'.`</li>
+                                        <li>`let myMessage: string = true;` might result in: `Type 'boolean' is not assignable to type 'string'.`</li>
+                                        <li>Changing `greet` to return a number might result in: `Type 'number' is not assignable to type 'string'.`</li>
+                                    </ul>
+                                    <p>The goal is to understand these messages and then correct the code to align with the declared types.</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#setup" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="setup">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: Setup Environment
+                        </a>
+                        <a href="#compiler" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="compiler">
+                            Next: Compiler Config <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="compiler" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">4. TypeScript Compiler Configuration</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 4: `tsconfig.json` & Options</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="4">
+                        </div>
+                    </div>
+            
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Understand the purpose and basic structure of the `tsconfig.json` file.</li>
+                            <li>Learn how to generate a `tsconfig.json` file.</li>
+                            <li>Configure common compiler options like `target`, `module`, `rootDir`, `outDir`, `strict`, `noImplicitAny`, and `sourceMap`.</li>
+                            <li>Observe how different compiler options affect the compilation process and output.</li>
+                        </ul>
+                    </div>
+            
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Creating and Customizing `tsconfig.json`</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create and customize a TypeScript configuration file:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>If you haven't already from Exercise 2, ensure you are in your `my-ts-project` directory. If `tsconfig.json` doesn't exist, create it:
+                                    <div class="code-block-container my-2">
+                                        <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">npx tsc --init</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </li>
+                                <li>Modify your `tsconfig.json` to include the following settings within `compilerOptions`:
+                                    <ul class="list-disc ml-5">
+                                        <li>`"target": "es6"`</li>
+                                        <li>`"module": "commonjs"`</li>
+                                        <li>`"rootDir": "./src"`</li>
+                                        <li>`"outDir": "./dist"`</li>
+                                        <li>`"strict": true`</li>
+                                        <li>`"noImplicitAny": true`</li>
+                                        <li>`"sourceMap": true`</li>
+                                    </ul>
+                                    (Ensure these lines are uncommented and correctly set.)
+                                </li>
+                                <li>Create a simple TypeScript file in your `src` directory (e.g., `src/app.ts`) with some basic code: `console.log("App is running!");`</li>
+                                <li>Compile your project by running `tsc` in the terminal from your project root.</li>
+                                <li>Verify that the compiled JavaScript (`app.js`) and its source map (`app.js.map`) appear in the `dist` directory.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Experimenting with Compiler Options</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Experiment with different compiler options:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create a file called `experiment.ts` in your `src` directory with the following code:
+                                    <div class="code-block-container my-2">
+                                        <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// src/experiment.ts
+// Add a comment here
+function calculateArea(width, height) { // Parameters 'width' and 'height' implicitly have an 'any' type.
+  return width * height;
+}
+
+let result = calculateArea(5, 10);
+console.log(\`The area is \${result}\`);</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </li>
+                                <li>Try compiling with different settings in `tsconfig.json` (run `tsc` after each change):
+                                    <ul class="list-disc ml-5">
+                                        <li>Set `"noImplicitAny": false`, then compile. Observe any changes in compiler messages. Then set it back to `true` and compile. Notice the error about implicit 'any' types for `width` and `height`. Fix this by adding `number` types to the parameters: `function calculateArea(width: number, height: number)`.</li>
+                                        <li>Set `"target": "es5"`, compile, and look at `dist/experiment.js`. Then change to `"target": "es2020"`, compile, and compare the generated JavaScript. Notice differences in syntax (e.g., `var` vs `let/const`, arrow functions if used).</li>
+                                        <li>Add some comments to your `experiment.ts`. Then set `"removeComments": true` in `tsconfig.json`, compile, and check if comments are stripped from `dist/experiment.js`. Set it back to `false` or remove the line.</li>
+                                    </ul>
+                                </li>
+                                <li>For each change, observe the differences in compiler warnings/errors and the generated JavaScript code in the `dist` folder.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>Expected Outcome & Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p>You should have a `tsconfig.json` file configured as requested in Part A. After running `tsc`, your `src/app.ts` should compile into `dist/app.js` and `dist/app.js.map`.</p>
+                                    <p><strong>For Part B:</strong></p>
+                                    <ul class="list-disc ml-5">
+                                        <li><strong>`noImplicitAny`</strong>: When `true`, TypeScript will error if it infers a type as `any` because no explicit type was provided. You'll need to add type annotations (e.g., `width: number`). When `false`, it allows implicit `any` types.</li>
+                                        <li><strong>`target`</strong>: This option changes the ECMAScript version of the output JavaScript. `es5` produces older, more widely compatible JavaScript. `es2020` produces modern JavaScript with newer features. You'll see syntax differences like `var` (ES5) vs. `let`/`const` (ES6+).</li>
+                                        <li><strong>`removeComments`</strong>: When `true`, comments are removed from the compiled JavaScript output. When `false` (or not set), comments are typically preserved.</li>
+                                    </ul>
+                                    <p>The key is to observe how these settings influence the compiler's behavior and the resulting JavaScript, helping you tailor the compilation process to your project's needs.</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#first-program" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="first-program">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: First Program
+                        </a>
+                        <a href="#basic-types" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="basic-types">
+                            Next: Basic Types <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="basic-types" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">5. Basic Types in TypeScript</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 5: Primitives, Arrays, Tuples, Enums</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="5">
+                        </div>
+                    </div>
+            
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Declare and use primitive types: `number`, `string`, `boolean`.</li>
+                            <li>Work with `array` types and tuple types.</li>
+                            <li>Define and use `enum` types (numeric and string).</li>
+                            <li>Understand TypeScript's type inference.</li>
+                        </ul>
+                    </div>
+            
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Working with Primitive Types, Arrays, Tuples, and Enums</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `types.ts` in your `src` directory and practice using TypeScript's basic types:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Declare variables with the following types, giving each an appropriate value:
+                                    <ul class="list-disc ml-5">
+                                        <li>A `number` variable for your age.</li>
+                                        <li>A `string` variable for your name.</li>
+                                        <li>A `boolean` variable indicating if you're currently learning TypeScript.</li>
+                                        <li>A `string[]` (array of strings) containing your favorite programming languages or hobbies.</li>
+                                        <li>A tuple `[string, number]` representing a product name and its price.</li>
+                                        <li>An `enum` for `UserRole` with values like `Admin`, `Editor`, `Viewer`.</li>
+                                    </ul>
+                                </li>
+                                <li>Add comments explaining each type declaration.</li>
+                                <li>Use string interpolation (template literals) to create a message that uses at least three of your declared variables. Log this message to the console.</li>
+                                <li>Compile (`tsc`) and run (`node dist/types.js`) your code.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Type Inference Challenge</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `inference.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Declare the following variables WITHOUT explicit type annotations:
+                                    <div class="code-block-container my-2">
+                                        <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">let count = 10;
+let message = "Hello, TypeScript!";
+let isActive = true;
+let scores = [85, 92, 78, 90];
+let userProfile = { id: 1, username: "coder123" };</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </li>
+                                <li>For each variable, try to assign a value of a different type (e.g., assign a string to `count`). Observe the errors TypeScript gives you when you try to compile.</li>
+                                <li>After observing, remove the incorrect assignments.</li>
+                                <li>Add comments above each variable declaration explaining what type TypeScript inferred for it and why (e.g., `// TypeScript infers 'count' as type 'number' because it's initialized with a numeric literal.`).</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part C: Enum Practice</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `enums.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create a numeric enum called `OrderStatus` with values: `Pending`, `Shipped`, `Delivered`, `Cancelled`.</li>
+                                <li>Create a string enum called `HttpMethod` with values: `GET = "GET"`, `POST = "POST"`, `PUT = "PUT"`, `DELETE = "DELETE"`.</li>
+                                <li>Write a function that takes an `OrderStatus` enum value and returns a descriptive string (e.g., "Your order is currently Pending.").</li>
+                                <li>Write a function that takes an `HttpMethod` enum value and logs a message like "Processing HTTP GET request."</li>
+                                <li>Test your functions by calling them with different enum values and logging the results.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>View Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p><strong>Part A (`types.ts` example snippet):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// src/types.ts
+// Number variable for age
+let myAge: number = 30;
+
+// String variable for name
+let myName: string = "Alex";
+
+// Boolean for learning status
+let isLearningTS: boolean = true;
+
+// Array of strings for hobbies
+let hobbies: string[] = ["coding", "reading", "hiking"];
+
+// Tuple for product name and price
+let product: [string, number] = ["Laptop", 1200.99];
+
+// Enum for UserRole
+enum UserRole {
+  Admin,    // 0
+  Editor,   // 1
+  Viewer    // 2
+}
+let currentUserRole: UserRole = UserRole.Admin;
+
+console.log(\`Hello, my name is \${myName}, I am \${myAge} and my role is \${UserRole[currentUserRole]}. I enjoy \${hobbies.join(', ')}.\`);</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part B (`inference.ts`):</strong> Focus on how TypeScript infers types from the initial assignment. For `userProfile`, it will infer an object type like `{ id: number; username: string; }`.</p>
+                                    <p><strong>Part C (`enums.ts` example snippet):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">// src/enums.ts
+enum OrderStatus {
+  Pending, Shipped, Delivered, Cancelled
+}
+enum HttpMethod {
+  GET = "GET", POST = "POST", PUT = "PUT", DELETE = "DELETE"
+}
+
+function getOrderStatusMessage(status: OrderStatus): string {
+  switch (status) {
+    case OrderStatus.Pending: return "Your order is currently Pending.";
+    // ... other cases
+    default: return "Unknown order status.";
+  }
+}
+console.log(getOrderStatusMessage(OrderStatus.Shipped));
+
+function processHttpRequest(method: HttpMethod): void {
+  console.log(\`Processing HTTP \${method} request.\`);
+}
+processHttpRequest(HttpMethod.POST);</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p>Remember to compile each `.ts` file (or run `tsc` for the whole project) and then run the corresponding `.js` file in the `dist` directory using Node.js.</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#compiler" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="compiler">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: Compiler Config
+                        </a>
+                        <a href="#functions" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="functions">
+                            Next: Functions <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="functions" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">6. Functions in TypeScript</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 6: Annotations, Parameters, Types</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="6">
+                        </div>
+                    </div>
+            
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Define function parameters and return types explicitly.</li>
+                            <li>Work with optional and default parameters in functions.</li>
+                            <li>Use rest parameters to handle a variable number of arguments.</li>
+                            <li>Understand and define function types using type aliases.</li>
+                            <li>Implement higher-order functions that accept other functions as arguments.</li>
+                        </ul>
+                    </div>
+            
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Function Type Annotations</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `functions.ts` in your `src` directory and practice using TypeScript's function types:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create the following functions with proper type annotations for parameters and return values:
+                                    <ul class="list-disc ml-5">
+                                        <li>A function `addNumbers` that takes two `number` parameters and returns their `number` sum.</li>
+                                        <li>A function `concatStrings` that takes two `string` parameters and returns their concatenated `string`.</li>
+                                        <li>A function `calculateAverage` that takes an array of `number`s (`number[]`) and returns their average as a `number`. (Handle the case of an empty array by returning 0).</li>
+                                        <li>A function `logMessage` that takes a `string` message and logs it to the console (this function should have a `void` return type).</li>
+                                    </ul>
+                                </li>
+                                <li>Call each function with appropriate arguments and log the results (where applicable).</li>
+                                <li>Try calling each function with incorrect argument types (e.g., `addNumbers("hello", 5)`) and observe the compiler errors. Correct them afterwards.</li>
+                                <li>Compile and run your code.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Optional, Default, and Rest Parameters</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> In the same `functions.ts` file, create the following functions:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>A function `createGreeting` that:
+                                    <ul class="list-disc ml-5">
+                                        <li>Takes a required `name` parameter (string).</li>
+                                        <li>Takes an optional `title` parameter (string, denoted by `?`).</li>
+                                        <li>Returns a greeting string. If `title` is provided, it returns "Hello, {title} {name}!". Otherwise, it returns "Hello, {name}!".</li>
+                                    </ul>
+                                </li>
+                                <li>A function `calculateOrderTotal` that:
+                                    <ul class="list-disc ml-5">
+                                        <li>Takes a required `price` parameter (number).</li>
+                                        <li>Takes a `quantity` parameter (number) with a default value of `1`.</li>
+                                        <li>Takes an optional `discountCode` parameter (string). If the discount code is "SAVE10", apply a 10% discount.</li>
+                                        <li>Returns the total cost (number).</li>
+                                    </ul>
+                                </li>
+                                <li>A function `sumAllNumbers` that uses rest parameters (`...numbers: number[]`) to accept any number of numeric arguments and returns their sum.</li>
+                                <li>Test all three functions with various combinations of arguments.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part C: Function Types and Higher-Order Functions</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `function_types.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Define a type alias named `ArithmeticOperation` for a function that takes two `number` parameters and returns a `number`.</li>
+                                <li>Create four functions: `add`, `subtract`, `multiply`, and `divide`. Each should match the `ArithmeticOperation` type. Ensure `divide` handles division by zero (e.g., return `Infinity` or throw an error).</li>
+                                <li>Create a higher-order function called `executeOperation` that:
+                                    <ul class="list-disc ml-5">
+                                        <li>Takes two `number` parameters (`a` and `b`).</li>
+                                        <li>Takes a third parameter `operation` of type `ArithmeticOperation`.</li>
+                                        <li>Applies the `operation` function to `a` and `b` and returns the result.</li>
+                                    </ul>
+                                </li>
+                                <li>Test your `executeOperation` function by passing each of your arithmetic functions (`add`, `subtract`, `multiply`, `divide`) as the `operation` argument and log the results.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>View Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p><strong>Part A (`functions.ts` example - `calculateAverage`):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">function calculateAverage(numbers: number[]): number {
+  if (numbers.length === 0) return 0;
+  const sum = numbers.reduce((acc, current) => acc + current, 0);
+  return sum / numbers.length;
+}</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part B (`functions.ts` example - `calculateOrderTotal`):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">function calculateOrderTotal(price: number, quantity: number = 1, discountCode?: string): number {
+  let total = price * quantity;
+  if (discountCode === "SAVE10") {
+    total *= 0.90; // Apply 10% discount
+  }
+  return total;
+}</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part C (`function_types.ts` example):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">type ArithmeticOperation = (x: number, y: number) => number;
+
+const add: ArithmeticOperation = (a, b) => a + b;
+// Define subtract, multiply, divide similarly
+
+function executeOperation(a: number, b: number, operation: ArithmeticOperation): number {
+  return operation(a, b);
+}
+
+console.log(executeOperation(10, 5, add)); // Output: 15</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p>Ensure you test various scenarios, especially for optional/default parameters and error conditions like division by zero.</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#basic-types" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="basic-types">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: Basic Types
+                        </a>
+                        <a href="#objects" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="objects">
+                            Next: Objects & Interfaces <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="objects" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">7. Objects and Interfaces in TypeScript</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 7: Structuring Data</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="7">
+                        </div>
+                    </div>
+            
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Define object types using inline annotations, type aliases, and interfaces.</li>
+                            <li>Understand and use optional and `readonly` properties in interfaces/types.</li>
+                            <li>Implement interface inheritance (extending interfaces).</li>
+                            <li>Use index signatures for objects with dynamic properties.</li>
+                            <li>Differentiate between interfaces and type aliases and know when to use each.</li>
+                        </ul>
+                    </div>
+            
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Object Type Annotations</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `objects.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create an object representing a `book` with the following properties:
+                                    <ul class="list-disc ml-5">
+                                        <li>`title` (string)</li>
+                                        <li>`author` (string)</li>
+                                        <li>`pages` (number)</li>
+                                        <li>`isPublished` (boolean, optional)</li>
+                                    </ul>
+                                </li>
+                                <li>Add proper inline type annotations for this `book` object.</li>
+                                <li>Log the `book` object to the console.</li>
+                                <li>Try accessing a property that doesn't exist (e.g., `book.genre`) and observe the TypeScript error.</li>
+                                <li>Try assigning a value of the wrong type to an existing property (e.g., `book.pages = "many"`) and observe the error.</li>
+                                <li>Correct any errors and compile/run your code.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Type Aliases and Interfaces</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `interfaces_types.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Define a `type` alias named `ProductType` for an object with properties: `id` (number), `name` (string), `price` (number), and an optional `description` (string).</li>
+                                <li>Define an `interface` named `IProduct` that represents the same structure as `ProductType`.</li>
+                                <li>Create an object instance using `ProductType` and another using `IProduct`. Log both to the console.</li>
+                                <li>In comments within the file, briefly discuss:
+                                    <ul class="list-disc ml-5">
+                                        <li>One key similarity between type aliases and interfaces for defining object shapes.</li>
+                                        <li>One key difference (e.g., declaration merging for interfaces, or ability of type aliases to represent unions/intersections/primitives).</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part C: Readonly Properties and Index Signatures</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `advanced_objects.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create an interface `AppConfig` with:
+                                    <ul class="list-disc ml-5">
+                                        <li>A `readonly apiKey` (string).</li>
+                                        <li>An `appName` (string).</li>
+                                        <li>An optional `version` (string).</li>
+                                    </ul>
+                                </li>
+                                <li>Create an instance of `AppConfig`. Try to modify the `apiKey` after creation and observe the error.</li>
+                                <li>Create an interface `UserSettings` that uses an index signature to allow any number of string properties, where each property's value is also a string (e.g., for storing theme settings like `{'theme': 'dark', 'fontSize': '16px'}`).</li>
+                                <li>Create an instance of `UserSettings` with a few settings and log it. Add a new setting dynamically.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part D: Extending Interfaces</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> In the same `advanced_objects.ts` file:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create a base interface `Vehicle` with a property `brand` (string) and a method `startEngine(): void`.</li>
+                                <li>Create an interface `Car` that extends `Vehicle` and adds a property `numberOfDoors` (number).</li>
+                                <li>Create an interface `Motorcycle` that extends `Vehicle` and adds a property `hasSidecar` (boolean).</li>
+                                <li>Create objects that implement `Car` and `Motorcycle`. Ensure they include the `brand` and implement `startEngine`.</li>
+                                <li>Write a function `displayVehicleInfo` that takes a `Vehicle` as an argument and logs its brand and calls `startEngine`. Test it with your `Car` and `Motorcycle` objects.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>View Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p><strong>Part A (`objects.ts`):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">let book: { title: string; author: string; pages: number; isPublished?: boolean } = {
+  title: "The TypeScript Handbook",
+  author: "Dr. Script",
+  pages: 300,
+  isPublished: true
+};
+console.log(book);</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part B (`interfaces_types.ts`):</strong> Remember that interfaces are open (can be merged) while type aliases are closed. Type aliases are more versatile for defining unions, intersections, etc.</p>
+                                    <p><strong>Part C (`advanced_objects.ts` - `AppConfig`):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">interface AppConfig {
+  readonly apiKey: string;
+  appName: string;
+  version?: string;
+}
+const myAppConfig: AppConfig = { apiKey: "xyz123", appName: "My Awesome App" };
+// myAppConfig.apiKey = "newkey"; // This will cause an error</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part D (`advanced_objects.ts` - Extending):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">interface Vehicle { brand: string; startEngine(): void; }
+interface Car extends Vehicle { numberOfDoors: number; }
+// ... implementations ...</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#functions" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="functions">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: Functions
+                        </a>
+                        <a href="#advanced" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center next-exercise" data-section="advanced">
+                            Next: Advanced Types <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="advanced" class="content-section mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">8. Advanced Types in TypeScript</h1>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b">
+                        <h2 class="text-2xl font-semibold text-blue-600 mb-2 sm:mb-0">Exercise 8: Unions, Intersections, Literals & More</h2>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">Mark as completed:</span>
+                            <input type="checkbox" class="exercise-checkbox form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-exercise="8">
+                        </div>
+                    </div>
+            
+                    <div class="border-l-4 border-sky-500 pl-4 mb-8 italic text-gray-600">
+                        <h3 class="text-xl font-semibold text-sky-700 mb-2">Learning Objectives</h3>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Effectively use union types (`|`) and type narrowing (`typeof`, `instanceof`, custom type guards).</li>
+                            <li>Combine types using intersection types (`&`).</li>
+                            <li>Define and use literal types (string, number, boolean literals).</li>
+                            <li>Safely access nested properties using optional chaining (`?.`) and nullish coalescing (`??`).</li>
+                            <li>Understand discriminated unions for more robust type checking. (Bonus)</li>
+                        </ul>
+                    </div>
+            
+                    <div class="prose max-w-none">
+                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Tasks</h3>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part A: Union Types and Type Narrowing</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `union_types.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Create a function `processInput` that accepts a parameter `input` which can be a `string`, a `number`, or a `boolean`.
+                                    <ul class="list-disc ml-5">
+                                        <li>If `input` is a `string`, log its length.</li>
+                                        <li>If `input` is a `number`, log whether it's positive, negative, or zero.</li>
+                                        <li>If `input` is a `boolean`, log "Input is true" or "Input is false".</li>
+                                        <li>Use `typeof` for type narrowing.</li>
+                                    </ul>
+                                </li>
+                                <li>Create a function `handleApiResponse` that takes a parameter `response` which can be either `{ success: true; data: unknown; }` or `{ success: false; error: { code: number; message: string; }; }`.
+                                    <ul class="list-disc ml-5">
+                                        <li>Use the `success` property to narrow down the type.</li>
+                                        <li>If successful, log "Data received: [data]".</li>
+                                        <li>If not successful, log "Error [code]: [message]".</li>
+                                    </ul>
+                                </li>
+                                <li>Test both functions with various valid inputs.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part B: Intersection Types</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `intersection_types.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Define an interface `Identifiable` with an `id: string` property.</li>
+                                <li>Define an interface `Timestamped` with `createdAt: Date` and `updatedAt: Date` properties.</li>
+                                <li>Create an intersection type `UserLog` that combines `Identifiable` and `Timestamped`, and also adds a `userId: string` and `action: string` property.</li>
+                                <li>Create a function `createUserActivityLog` that takes a `UserLog` object and logs a formatted message like: "Log [id] for user [userId]: [action] at [createdAt]".</li>
+                                <li>Create a `UserLog` object and test your function.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part C: Literal Types</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `literal_types.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Define a literal type `LogLevel` that can only be one of the strings: `"debug"`, `"info"`, `"warn"`, or `"error"`.</li>
+                                <li>Define a literal type `StatusCode` that can only be one of the numbers: `200`, `400`, `404`, or `500`.</li>
+                                <li>Create a function `logData` that takes a `message: string` and a `level: LogLevel`. It should log the message prefixed with the log level (e.g., `"[INFO]: User logged in"`).</li>
+                                <li>Create a function `handleStatus` that takes a `status: StatusCode` and returns a descriptive string (e.g., for `200` return "OK", for `404` return "Not Found").</li>
+                                <li>Test your functions with valid literal type values. Try passing an invalid string to `logData` for `level` and observe the TypeScript error.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-6">
+                            <h4 class="text-xl font-semibold text-sky-700 mb-3">Part D: Optional Chaining and Nullish Coalescing</h4>
+                            <p class="text-gray-700 mb-4"><strong>Instructions:</strong> Create a new file called `optional_chaining.ts` in your `src` directory:</p>
+                            <ol class="list-decimal ml-5 space-y-2 text-gray-700">
+                                <li>Define an interface `UserProfile` with:
+                                    <ul class="list-disc ml-5">
+                                        <li>`id: number`</li>
+                                        <li>`username: string`</li>
+                                        <li>`preferences?: { theme?: "dark" | "light"; notifications?: { email?: boolean; sms?: boolean } }` (notice nested optional properties)</li>
+                                    </ul>
+                                </li>
+                                <li>Create a few `UserProfile` objects: one with full preferences, one with partial preferences, and one with no preferences object.</li>
+                                <li>Write a function `getUserTheme` that takes a `UserProfile` object and returns the user's theme.
+                                    <ul class="list-disc ml-5">
+                                        <li>Use optional chaining (`?.`) to safely access `preferences` and `theme`.</li>
+                                        <li>Use nullish coalescing (`??`) to return a default theme of `"light"` if the theme is not set or `preferences` is missing.</li>
+                                    </ul>
+                                </li>
+                                <li>Test `getUserTheme` with your different user profile objects and log the results.</li>
+                            </ol>
+                        </div>
+            
+                        <div class="mt-6">
+                             <details class="group bg-gray-50 p-4 rounded-lg shadow">
+                                <summary class="font-semibold text-gray-700 cursor-pointer group-hover:text-blue-600 flex items-center justify-between">
+                                    <span>View Solution Guidance</span>
+                                    <i class="fas fa-chevron-down transform transition-transform duration-200 group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 text-gray-600 space-y-4">
+                                    <p><strong>Part A (`union_types.ts` - `handleApiResponse` example):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">type SuccessResponse = { success: true; data: unknown; };
+type ErrorResponse = { success: false; error: { code: number; message: string; }; };
+type ApiResponse = SuccessResponse | ErrorResponse;
+
+function handleApiResponse(response: ApiResponse): void {
+  if (response.success) { // Type guard narrows to SuccessResponse
+    console.log(\`Data received: \${JSON.stringify(response.data)}\`);
+  } else { // Type guard narrows to ErrorResponse
+    console.log(\`Error \${response.error.code}: \${response.error.message}\`);
+  }
+}</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part B (`intersection_types.ts`):</strong> Intersection types combine all properties of the constituent types.</p>
+                                    <p><strong>Part C (`literal_types.ts` - `logData` example):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">type LogLevel = "debug" | "info" | "warn" | "error";
+function logData(message: string, level: LogLevel): void {
+  console.log(\`[\${level.toUpperCase()}]: \${message}\`);
+}
+logData("User logged in.", "info");
+// logData("System critical.", "critical"); // Error: Argument of type '"critical"' is not assignable to parameter of type 'LogLevel'.</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                    <p><strong>Part D (`optional_chaining.ts` - `getUserTheme` example):</strong></p>
+                                    <div class="code-block-container">
+                                    <pre class="bg-gray-800 text-white p-4 rounded-lg shadow-md overflow-x-auto"><code class="font-mono text-sm">interface UserProfile { /* ... as defined ... */ }
+function getUserTheme(profile: UserProfile): "dark" | "light" {
+  return profile.preferences?.theme ?? "light";
+}</code></pre>
+                                        <button class="copy-code-button" title="Copy code"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+            
+                    <div class="flex flex-col sm:flex-row justify-between mt-10 pt-6 border-t border-gray-200">
+                        <a href="#objects" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center prev-exercise mb-4 sm:mb-0" data-section="objects">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous: Objects & Interfaces
+                        </a>
+                        <a href="#welcome" class="text-green-600 hover:text-green-800 font-semibold flex items-center next-exercise" data-section="welcome">
+                            Back to Welcome <i class="fas fa-check-circle ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <button id="back-to-top" class="print-hide fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0">
+                <i class="fas fa-arrow-up"></i>
+            </button>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const closeSidebarButton = document.getElementById('close-sidebar-button');
+            const mainContent = document.querySelector('.main-content');
+            const sidebarLinks = document.querySelectorAll('.sidebar-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            const exerciseCheckboxes = document.querySelectorAll('.exercise-checkbox');
+            const progressCount = document.getElementById('progress-count');
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            const startLearningButton = document.getElementById('start-learning-button');
+            const resetProgressButton = document.getElementById('reset-progress-button');
+            const backToTopButton = document.getElementById('back-to-top');
+
+            const totalExercises = 8; // Fixed number of exercises
+            let completedExercises = new Set();
+
+            // --- Sidebar Toggle ---
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+            }
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+            }
+            mobileMenuButton.addEventListener('click', openSidebar);
+            closeSidebarButton.addEventListener('click', closeSidebar);
+            
+            // Close sidebar when clicking outside on mobile, or on a link
+            document.addEventListener('click', (event) => {
+                if (!sidebar.contains(event.target) && !mobileMenuButton.contains(event.target) && window.innerWidth < 1024) {
+                    if (!sidebar.classList.contains('-translate-x-full')) {
+                         closeSidebar();
+                    }
+                }
+            });
+
+            // --- Navigation ---
+            function setActiveSection(sectionId, updateURL = true) {
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === sectionId) {
+                        section.classList.add('active');
+                        mainContent.scrollTop = 0; // Scroll to top of content area
+                    }
+                });
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+                if (updateURL) {
+                    history.pushState(null, '', `#${sectionId}`);
+                }
+                if (window.innerWidth < 1024) { // Close sidebar on mobile after navigation
+                    closeSidebar();
+                }
+            }
+
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('data-section');
+                    setActiveSection(sectionId);
+                });
+            });
+
+            document.querySelectorAll('.next-exercise, .prev-exercise').forEach(navLink => {
+                navLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = navLink.getAttribute('data-section');
+                    setActiveSection(sectionId);
+                });
+            });
+            
+            startLearningButton.addEventListener('click', () => {
+                setActiveSection('intro');
+            });
+
+            // --- Progress Tracking ---
+            function updateProgress() {
+                const completedCount = completedExercises.size;
+                progressCount.textContent = completedCount;
+                const progressPercentage = (completedCount / totalExercises) * 100;
+                progressBarFill.style.width = `${progressPercentage}%`;
+
+                // Save to localStorage
+                localStorage.setItem('completedTypeScriptExercises', JSON.stringify(Array.from(completedExercises)));
+            }
+
+            function loadProgress() {
+                const savedProgress = localStorage.getItem('completedTypeScriptExercises');
+                if (savedProgress) {
+                    completedExercises = new Set(JSON.parse(savedProgress));
+                    exerciseCheckboxes.forEach(checkbox => {
+                        const exerciseId = checkbox.getAttribute('data-exercise');
+                        if (completedExercises.has(exerciseId)) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+                updateProgress();
+            }
+
+            exerciseCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const exerciseId = checkbox.getAttribute('data-exercise');
+                    if (checkbox.checked) {
+                        completedExercises.add(exerciseId);
+                    } else {
+                        completedExercises.delete(exerciseId);
+                    }
+                    updateProgress();
+                });
+            });
+
+            resetProgressButton.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset your progress?')) {
+                    completedExercises.clear();
+                    exerciseCheckboxes.forEach(checkbox => checkbox.checked = false);
+                    localStorage.removeItem('completedTypeScriptExercises');
+                    updateProgress();
+                }
+            });
+            
+            // --- Initial Load ---
+            function handleInitialLoad() {
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    const targetSection = document.getElementById(hash);
+                    if (targetSection && targetSection.classList.contains('content-section')) {
+                        setActiveSection(hash, false);
+                    } else {
+                        setActiveSection('welcome', false); // Default to welcome if hash is invalid
+                    }
+                } else {
+                    setActiveSection('welcome', false); // Default to welcome section
+                }
+                loadProgress();
+            }
+
+            window.addEventListener('popstate', () => { // Handle browser back/forward
+                const hash = window.location.hash.substring(1) || 'welcome';
+                setActiveSection(hash, false);
+            });
+
+            handleInitialLoad();
+
+            // --- Copy Code Button ---
+            document.querySelectorAll('.copy-code-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const pre = button.parentElement.querySelector('pre');
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="fas fa-copy"></i>';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                        button.innerText = 'Failed!';
+                         setTimeout(() => {
+                            button.innerHTML = '<i class="fas fa-copy"></i>';
+                        }, 2000);
+                    });
+                });
+            });
+
+            // --- Back to Top Button ---
+            mainContent.addEventListener('scroll', () => {
+                if (mainContent.scrollTop > 200) {
+                    backToTopButton.classList.remove('opacity-0');
+                    backToTopButton.classList.add('opacity-100');
+                } else {
+                    backToTopButton.classList.add('opacity-0');
+                    backToTopButton.classList.remove('opacity-100');
+                }
+            });
+
+            backToTopButton.addEventListener('click', () => {
+                mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+        });
+    </script>
+</body>
+</html>
